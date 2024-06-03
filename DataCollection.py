@@ -15,7 +15,9 @@ DATA_DIR = './data'
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
-number_of_classes = 3
+existing_classes = [int(d) for d in os.listdir(DATA_DIR) if os.path.isdir(os.path.join(DATA_DIR,d))]
+existing_classes.sort()
+
 dataset_size = 100
 
 # Find a working camera index
@@ -30,7 +32,7 @@ if not cap.isOpened():
     print("Error: Could not open video stream or file")
     exit()
 
-for j in range(number_of_classes):
+for j in range(len(existing_classes) ,len(existing_classes)+2):
     class_dir = os.path.join(DATA_DIR, str(j))
     if not os.path.exists(class_dir):
         os.makedirs(class_dir)
@@ -43,7 +45,7 @@ for j in range(number_of_classes):
             print("Error: Could not read frame from camera")
             break
 
-        cv2.putText(frame, 'Ready? Press "Q" ! :)', (100, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 255, 0), 3,
+        cv2.putText(frame, 'Ready? Press "Q" !', (100, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 255, 0), 3,
                     cv2.LINE_AA)
         cv2.imshow('frame', frame)
 
