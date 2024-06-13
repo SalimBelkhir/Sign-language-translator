@@ -5,7 +5,6 @@ import pickle
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
-# Initialize Mediapipe Hands
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
 
