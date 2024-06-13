@@ -3,22 +3,21 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-# Load the pre-trained model
 with open('svm_model.p', 'rb') as f:
     model_dict = pickle.load(f)
 model = model_dict['model']
 scaler = model_dict['scaler']
 
-# Initialize video capture
-cap = cv2.VideoCapture(0)  # Use the correct camera index
 
-# Initialize MediaPipe Hands
+cap = cv2.VideoCapture(0)  
+
+
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=False, min_detection_confidence=0.3, max_num_hands=2)
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
-# Labels dictionary for predictions
+
 labels_dict = {0: 'A', 1: 'B', 2: 'L', 3: 'C', 4: 'D', 5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I',
                10: 'J', 11: 'K', 12: 'M', 13: 'N', 14: 'O', 15: 'P', 16: 'Q', 17: 'R', 18: 'S',
                19: 'T', 20: 'U', 21: 'V', 22: 'W', 23: 'X', 24: 'Y', 25: 'Z', 26: '1', 27: '2',
