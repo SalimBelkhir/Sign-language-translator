@@ -8,7 +8,11 @@ with open('svm_model.p', 'rb') as f:
 model = model_dict['model']
 scaler = model_dict['scaler']
 
-
+mp_holistic = mp.solutions.holistic
+holistic_model = mp_holistic.Holistic(
+    min_detection_confidence=0.5 ,
+    min_tracking_confidence=0.5
+)
 cap = cv2.VideoCapture(0)  
 
 
@@ -31,9 +35,26 @@ while True:
     H, W, _ = frame.shape
 
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = holistic_model.process(frame)
+    # Drawing the Facial Landmarks
+
 
     hand_results = hands.process(frame_rgb)
-
+    mp_drawing.draw_landmarks(
+        frame,
+        results.face_landmarks,
+        mp_holistic.FACEMESH_CONTOURS,
+        mp_drawing.DrawingSpec(
+            color=(255, 0, 255),
+            thickness=1,
+            circle_radius=1
+        ),
+        mp_drawing.DrawingSpec(
+            color=(0, 255, 255),
+            thickness=1,
+            circle_radius=1
+        )
+    )
     if hand_results.multi_hand_landmarks:
         for hand_landmarks in hand_results.multi_hand_landmarks:
             data_aux = []
@@ -41,12 +62,13 @@ while True:
             y_ = []
 
             mp_drawing.draw_landmarks(
-                frame,  # Image to draw
-                hand_landmarks,  # Model output
-                mp_hands.HAND_CONNECTIONS,  # Hand connections
+                frame,  
+                hand_landmarks, 
+                mp_hands.HAND_CONNECTIONS,  
                 mp_drawing_styles.get_default_hand_landmarks_style(),
                 mp_drawing_styles.get_default_hand_connections_style()
             )
+
 
             for landmark in hand_landmarks.landmark:
                 x = landmark.x
@@ -61,7 +83,7 @@ while True:
                 data_aux.append(landmark.x - min_x)
                 data_aux.append(landmark.y - min_y)
 
-            # Ensure data_aux has the correct length
+
             if len(data_aux) == 42:
                 data_aux = np.asarray(data_aux).reshape(1, -1)
                 data_aux = scaler.transform(data_aux)
